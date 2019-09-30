@@ -1,11 +1,10 @@
 const Env = require("./env");
-const Input = require('prompt-input');
 const prompts = require("prompts")
-const https = require("https");
 const crypto = require("crypto");
+const request = require("request");
 
 const USER_AGENT = "blih-1.7";
-const BASE_URL = "blih.epitech.eu";
+const BASE_URL = "https://blih.epitech.eu";
 
 class Blih {
     constructor()
@@ -37,7 +36,7 @@ class Blih {
         cb();
     }
 
-    AskUser(cb, args)
+    async AskUser(cb, args)
     {
         const input = await prompts([{
             name: "username",
@@ -50,21 +49,12 @@ class Blih {
             message: "Save ? (y/n)"
         }]);
 
-        input.run().then((res) => {
-            Env.USER = res;
+        Env.USER = input.username;
 
-            const save = new Input({
-                name: "save",
-                message: "Save ? (y/n)"
-            });
+        if (input.validate == "y")
+            Env.SaveUser(input.username);
 
-            save.run().then((savea) => {
-                if (savea == "y")
-                    Env.SaveUser(res);
-
-                cb(args);
-            });
-        });
+        cb(args);
     }
 
     GetToken()
@@ -74,13 +64,13 @@ class Blih {
 
     GetSignedData(data)
     {
-        const signature = crypto.createHmac("sha512", new Buffer(this.GetToken(), "utf8"));
-        signature.update(new Buffer(Env.PASSWD, "utf8"));
+        const signature = crypto.createHmac("sha512",this.GetToken());
+        signature.update(Env.USER, "utf8");
 
         if (data)
-            signature.update(new Buffer(JSON.stringify(data), "utf8"));
+            signature.update(JSON.stringify(data));
 
-        const signedData = {"user": Env.PASSWD, signature: signature.digest("hex")};
+        const signedData = {"user": Env.USER, signature: signature.digest("hex")};
 
         if (data)
             signedData.data = data;
@@ -90,24 +80,19 @@ class Blih {
 
     ServRequest(resource, method, data)
     {
-        const req = https.request({
-            hostname: BASE_URL,
+        const options = {
+            url: BASE_URL + resource,
             method: method,
-            path: resource,
-            port: 443,
             headers: {
                 "Content-Type": "application/json",
                 "User-Agent": USER_AGENT,
-            }
-        }, res => {
-            res.on("data", part => {
-                console.log("Part " + part)
-            });
+            },
+            body: JSON.stringify(this.GetSignedData(data))
+        };
+
+        request(options, (err, res, body) => {
+            console.log(JSON.parse(body));
         });
-
-        req.write(JSON.stringify(this.GetSignedData(data)));
-
-        req.end();
     }
 
     Create(name)
