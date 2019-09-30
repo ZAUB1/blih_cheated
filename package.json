@@ -9,6 +9,7 @@
   "author": "ZAUB1",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^8.1.0"
+    "dotenv": "^8.1.0",
+    "password-prompt": "^1.1.2"
   }
 }

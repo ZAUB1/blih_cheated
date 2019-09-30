@@ -1,4 +1,10 @@
 const Blih = require("./blih");
+const prompt = require("prompt");
+
+const readLine = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 const CBS = [];
 
@@ -42,7 +48,20 @@ Commands:
             case "create":
                 Blih.Create(args[index + 1]);
                 break;
+
+            case "delete":
+                Blih.Delete(args[index + 1]);
+                break;
         }
+    });
+};
+
+CBS["-u"] = CBS["--user"] = async args => {
+    readLine.question("Username: ", (ans) => {
+        Env.PASSWD = ans;
+        readLine.close();
+
+        CBS[args[0]](args.slice(1));
     });
 };
 
