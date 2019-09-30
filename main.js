@@ -53,9 +53,9 @@ Commands:
     });
 };
 
-CBS["-u"] = CBS["--user"] = async args => {
+/*CBS["-u"] = CBS["--user"] = async args => {
     Blih.AskUser(CBS[args[0]], args.slice(0));
-};
+};*/
 
 setImmediate(() => {
     if (process.argv.length <= 2)

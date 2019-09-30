@@ -36,25 +36,27 @@ class Blih {
         cb();
     }
 
-    async AskUser(cb, args)
+    async AskUser()
     {
-        const input = await prompts([{
-            name: "username",
-            type: "text",
-            message: "Username (epitech.eu)"
-        },
-        {
-            type: "text",
-            name: "validate",
-            message: "Save ? (y/n)"
-        }]);
+        if (!Env.USER)
+		{
+			const input = await prompts([{
+				name: "username",
+				type: "text",
+				message: "Username (epitech.eu)"
+			},
+			{
+				type: "text",
+				name: "validate",
+				message: "Save ? (y/n)"
+			}]);
 
-        Env.USER = input.username;
+			Env.USER = input.username;
 
-        if (input.validate == "y")
-            Env.SaveUser(input.username);
-
-        cb(args);
+			if (input.validate == "y")
+				Env.SaveUser(input.username);
+		}
+        //cb(args);
     }
 
     GetToken()
@@ -95,30 +97,30 @@ class Blih {
         });
     }
 
-    Create(name)
+    async Create(name)
     {
         if (!Env.USER)
-            throw "No user specified, repo creation aborted.";
+            await this.AskUser();
 
         this.AskForPass(() => {
             this.ServRequest("");
         });
     }
 
-    Delete(name)
+    async Delete(name)
     {
         if (!Env.USER)
-            throw "No user specified, repo deletion aborted.";
+            await this.AskUser();
 
         this.AskForPass(() => {
             this.ServRequest();
         });
     }
 
-    List()
+    async List()
     {
         if (!Env.USER)
-            throw "No user specified, repo deletion aborted.";
+            await this.AskUser();
 
         this.AskForPass(() => {
             this.ServRequest("/repositories", "GET");
