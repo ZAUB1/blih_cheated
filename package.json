@@ -10,6 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.1.0",
-    "password-prompt": "^1.1.2"
+    "password-prompt": "^1.1.2",
+    "prompt": "^1.0.0",
+    "prompt-input": "^3.0.0",
+    "prompts": "^2.2.1"
   }
 }
