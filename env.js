@@ -10,7 +10,7 @@ class Env {
         this.PASSWD = null;
         this.jdata = {};
 
-        fs.readFile(ENVFILE, (err, data) => {
+        /* fs.readFile(ENVFILE, (err, data) => {
             if (err)
                 return fs.writeFileSync(ENVFILE, "{}");
 
@@ -21,7 +21,15 @@ class Env {
 
             if (this.jdata.passwd)
                 this.PASSWD = this.jdata.passwd;
-        });
+        }); */
+
+        this.jdata = JSON.parse(fs.readFileSync(ENVFILE));
+
+        if (this.jdata.user)
+            this.USER = this.jdata.user;
+
+        if (this.jdata.passwd)
+            this.PASSWD = this.jdata.passwd;
     }
 
     SaveUser(usr)
@@ -37,6 +45,15 @@ class Env {
         this.jdata.passwd = pass;
         this.PASSWD = pass;
 
+        fs.writeFileSync(ENVFILE, JSON.stringify(this.jdata));
+    }
+
+    ResetEnv()
+    {
+        Env.USER = null;
+        Env.PASSWD = null;
+
+        this.jdata = {};
         fs.writeFileSync(ENVFILE, JSON.stringify(this.jdata));
     }
 }

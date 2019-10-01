@@ -39,24 +39,29 @@ class Blih {
     async AskUser()
     {
         if (!Env.USER)
-		{
-			const input = await prompts([{
-				name: "username",
-				type: "text",
-				message: "Username (epitech.eu)"
-			},
-			{
-				type: "text",
-				name: "validate",
-				message: "Save ? (y/n)"
-			}]);
+        {
+            const input = await prompts([{
+                name: "username",
+                type: "text",
+                message: "Username (epitech.eu)"
+            },
+            {
+                type: "text",
+                name: "validate",
+                message: "Save ? (y/n)"
+            }]);
 
-			Env.USER = input.username;
+            Env.USER = input.username;
 
-			if (input.validate == "y")
-				Env.SaveUser(input.username);
-		}
+            if (input.validate == "y")
+                Env.SaveUser(input.username);
+        }
         //cb(args);
+    }
+
+    Logout()
+    {
+        Env.ResetEnv();
     }
 
     GetToken()

@@ -8,11 +8,11 @@ Advanced blih (EPITECH repository tool) by ZAUB1.
 Options:
 • -h | --help -- Shows this
 • -v | --verbose -- Shows advanced logging about what's going on
-• -u | --user -- Runs the command as a specific user (allows to switch between users as this saves it)
 
 Commands:
 • repo | repository -- Allows for repository managment
 • who -- In case you forgot who you are, it prints it.
+• userlogout -- Logs out current user in order to use the tool as another one
     `);
 
     process.exit();
@@ -56,6 +56,10 @@ Commands:
 /*CBS["-u"] = CBS["--user"] = async args => {
     Blih.AskUser(CBS[args[0]], args.slice(0));
 };*/
+
+CBS["userlogout"] = () => {
+    Blih.Logout();
+};
 
 setImmediate(() => {
     if (process.argv.length <= 2)
