@@ -71,16 +71,24 @@ class Blih {
 
     GetSignedData(data)
     {
-        const signature = crypto.createHmac("sha512",this.GetToken());
+        const signature = crypto.createHmac("sha512", this.GetToken());
         signature.update(Env.USER, "utf8");
 
         if (data)
-            signature.update(JSON.stringify(data));
+        {
+            const ordered = {};
+
+            Object.keys(data).sort().forEach(key => {
+                ordered[key] = data[key];
+            });
+
+            signature.update(JSON.stringify(ordered, null, 4));
+        }
 
         const signedData = {"user": Env.USER, signature: signature.digest("hex")};
 
         if (data)
-            signedData.data = data;
+            signedData["data"] = data;
 
         return signedData;
     }
@@ -97,8 +105,26 @@ class Blih {
             body: JSON.stringify(this.GetSignedData(data))
         };
 
+        //console.log(this.GetSignedData(data));
+
         request(options, (err, res, body) => {
-            console.log(JSON.parse(body));
+            //console.log(body);
+            //console.log(JSON.parse(body));
+
+            const data = JSON.parse(body);
+
+            if (data.error)
+            {
+                console.log("❌ " + data.error);
+            }
+            else if (data.repositories)
+            {
+                //
+            }
+            else if (data.message)
+            {
+                console.info("✔️  " + data.message);
+            }
         });
     }
 
@@ -108,7 +134,7 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
-            this.ServRequest("");
+            this.ServRequest("/repositories", "POST", { name: name, type: "git" });
         });
     }
 
@@ -118,7 +144,17 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
-            this.ServRequest();
+            this.ServRequest("/repository/" + name, "DELETE");
+        });
+    }
+
+    async Info(name)
+    {
+        if (!Env.USER)
+            await this.AskUser();
+
+        this.AskForPass(() => {
+            this.ServRequest("/repository/" + name, "GET");
         });
     }
 
@@ -129,6 +165,26 @@ class Blih {
 
         this.AskForPass(() => {
             this.ServRequest("/repositories", "GET");
+        });
+    }
+
+    async GetAcl(name)
+    {
+        if (!Env.USER)
+            await this.AskUser();
+
+        this.AskForPass(() => {
+            this.ServRequest("/repository/" + name + "/acls", "GET");
+        });
+    }
+
+    async SetAcl(name, user, perm)
+    {
+        if (!Env.USER)
+            await this.AskUser();
+
+        this.AskForPass(() => {
+            this.ServRequest("/repository/" + name + "/acls", "POST", { user: user, acl: perm });
         });
     }
 }

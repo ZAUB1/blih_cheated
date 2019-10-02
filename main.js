@@ -18,10 +18,8 @@ Commands:
     process.exit();
 };
 
-CBS["repo"] = CBS["repository"] = async args => {
-    if (args.length == 0)
-    {
-        console.log(`
+const repo_man = () => {
+    console.log(`
 Repository command usage: zblih + [options] repository [command]
 
 Commands:
@@ -30,18 +28,25 @@ Commands:
 • delete -- Deletes the specified repo
 • setacl -- Allows to set permission to users on the repo
 • getacl -- Shows users perms on the repo
-        `);
+    `);
+};
+
+CBS["repo"] = CBS["repository"] = async args => {
+    if (args.length == 0)
+    {
+        repo_man();
 
         process.exit();
     }
 
-    args.forEach((val, index) => {
+    args.every((val, index) => {
         switch (val)
         {
             case "create":
                 Blih.Create(args[index + 1]);
                 break;
 
+            case "remove":
             case "delete":
                 Blih.Delete(args[index + 1]);
                 break;
@@ -49,6 +54,18 @@ Commands:
             case "list":
                 Blih.List();
                 break;
+
+            case "info":
+                Blih.Info(args[index + 1]);
+
+            case "getacl":
+                Blih.GetAcl(args[index + 1]);
+
+            case "setacl":
+                Blih.SetAcl(args[index + 1], args[index + 2], args[index + 3]);
+
+            /*default:
+                repo_man();*/
         }
     });
 };
