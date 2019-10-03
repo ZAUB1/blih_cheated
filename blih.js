@@ -193,6 +193,8 @@ class Blih {
 
     async GetAcl(name)
     {
+        this.fetchingAcls = true;
+
         if (!Env.USER)
             await this.AskUser();
 
@@ -205,8 +207,6 @@ class Blih {
 
     async SetAcl(name, user, perm)
     {
-        this.fetchingAcls = true;
-
         if (!Env.USER)
             await this.AskUser();
 
