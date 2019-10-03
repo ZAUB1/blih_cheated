@@ -57,12 +57,15 @@ CBS["repo"] = CBS["repository"] = async args => {
 
             case "info":
                 Blih.Info(args[index + 1]);
+                break;
 
             case "getacl":
                 Blih.GetAcl(args[index + 1]);
+                break;
 
             case "setacl":
                 Blih.SetAcl(args[index + 1], args[index + 2], args[index + 3]);
+                break;
 
             /*default:
                 repo_man();*/

@@ -2,6 +2,7 @@ const Env = require("./env");
 const prompts = require("prompts")
 const crypto = require("crypto");
 const request = require("request");
+const ora = require("ora");
 
 const USER_AGENT = "blih-1.7";
 const BASE_URL = "https://blih.epitech.eu";
@@ -9,7 +10,9 @@ const BASE_URL = "https://blih.epitech.eu";
 class Blih {
     constructor()
     {
-        //Stuff
+        this.spinner;
+
+        this.fetchingAcls = false;
     }
 
     async AskForPass(cb)
@@ -105,25 +108,37 @@ class Blih {
             body: JSON.stringify(this.GetSignedData(data))
         };
 
-        //console.log(this.GetSignedData(data));
-
         request(options, (err, res, body) => {
-            //console.log(body);
-            //console.log(JSON.parse(body));
-
             const data = JSON.parse(body);
 
             if (data.error)
             {
-                console.log("❌ " + data.error);
+                this.spinner.fail(data.error);
+
+                process.error();
             }
             else if (data.repositories)
             {
-                //
+                this.spinner.info("Repositories fetched correctly");
+
+                Object.keys(data.repositories).map(key => {
+                    console.log("• " + key);
+                });
             }
             else if (data.message)
             {
-                console.info("✔️  " + data.message);
+                this.spinner.succeed(data.message);
+            }
+            else
+            {
+                if (this.fetchingAcls)
+                {
+                    this.spinner.info("Repository acls fetched correctly");
+
+                    Object.keys(data).map(key => {
+                        console.log("• " + key + " -> " + data[key]);
+                    });
+                }
             }
         });
     }
@@ -134,6 +149,8 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
+            this.spinner = ora('Creating repo').start();
+
             this.ServRequest("/repositories", "POST", { name: name, type: "git" });
         });
     }
@@ -144,6 +161,8 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
+            this.spinner = ora('Deleting repo').start();
+
             this.ServRequest("/repository/" + name, "DELETE");
         });
     }
@@ -154,6 +173,8 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
+            this.spinner = ora('Getting repo infos').start();
+
             this.ServRequest("/repository/" + name, "GET");
         });
     }
@@ -164,6 +185,8 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
+            this.spinner = ora('Getting repos').start();
+
             this.ServRequest("/repositories", "GET");
         });
     }
@@ -174,16 +197,22 @@ class Blih {
             await this.AskUser();
 
         this.AskForPass(() => {
+            this.spinner = ora("Getting repo's acls").start();
+
             this.ServRequest("/repository/" + name + "/acls", "GET");
         });
     }
 
     async SetAcl(name, user, perm)
     {
+        this.fetchingAcls = true;
+
         if (!Env.USER)
             await this.AskUser();
 
         this.AskForPass(() => {
+            this.spinner = ora("Setting repo's acls").start();
+
             this.ServRequest("/repository/" + name + "/acls", "POST", { user: user, acl: perm });
         });
     }
