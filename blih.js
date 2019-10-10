@@ -3,6 +3,7 @@ const prompts = require("prompts")
 const crypto = require("crypto");
 const request = require("request");
 const ora = require("ora");
+const nodegit = require("nodegit");
 
 const USER_AGENT = "blih-1.7";
 const BASE_URL = "https://blih.epitech.eu";
@@ -124,6 +125,8 @@ class Blih {
                 Object.keys(data.repositories).map(key => {
                     console.log("• " + key);
                 });
+
+				process.exit();
             }
             else if (data.message)
             {
@@ -215,6 +218,27 @@ class Blih {
 
             this.ServRequest("/repository/" + name + "/acls", "POST", { user: user, acl: perm });
         });
+    }
+
+    async Clone(name)
+    {
+        /*const cloneoptions = {
+            fetchOpts: {
+                callbacks: {
+                    certificateCheck: function() { return 0; },
+                    credentials: function(url, userName) {
+                        console.log(userName);
+                        return nodegit.Cred.sshKeyFromAgent(userName);
+                    }
+                }
+            }
+        };
+
+        nodegit.Clone.clone("git@git.epitech.eu:/" + Env.USER + "/" + name, name, cloneoptions).then(repo => {
+            console.log(repo)
+        }).catch(console.log);*/
+
+		console.log("Nah, this doesn't work yet");
     }
 }
 
