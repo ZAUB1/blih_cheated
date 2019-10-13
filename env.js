@@ -10,6 +10,7 @@ class Env {
         this.USER = null;
         this.PASSWD = null;
         this.OSUSER = os.user;
+        this.WORK_PATH = process.cwd();
         this.jdata = {};
 
         this.jdata = JSON.parse(fs.readFileSync(ENVFILE));

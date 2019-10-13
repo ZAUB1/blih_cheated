@@ -3,21 +3,31 @@ const prompts = require("prompts")
 const crypto = require("crypto");
 const request = require("request");
 const ora = require("ora");
-const nodegit = require("nodegit");
+const exec = require("child_process").exec;
 
 const USER_AGENT = "blih-1.7";
 const BASE_URL = "https://blih.epitech.eu";
+
+const delay = (ms) => { //Awaitable
+    return new Promise (bullshit => {
+        setTimeout(bullshit, ms);
+    });
+};
 
 class Blih {
     constructor()
     {
         this.spinner;
+        this.child;
 
+        this.requesting = false;
         this.fetchingAcls = false;
     }
 
     async AskForPass(cb)
     {
+        this.requesting = true;
+
         if (Env.PASSWD)
             return cb();
 
@@ -44,6 +54,8 @@ class Blih {
     {
         if (!Env.USER)
         {
+            this.requesting = true;
+
             const input = await prompts([{
                 name: "username",
                 type: "text",
@@ -60,7 +72,6 @@ class Blih {
             if (input.validate == "y")
                 Env.SaveUser(input.username);
         }
-        //cb(args);
     }
 
     Logout()
@@ -99,6 +110,8 @@ class Blih {
 
     ServRequest(resource, method, data)
     {
+        this.requesting = true;
+
         const options = {
             url: BASE_URL + resource,
             method: method,
@@ -116,7 +129,7 @@ class Blih {
             {
                 this.spinner.fail(data.error);
 
-                process.error();
+                process.exit(184);
             }
             else if (data.repositories)
             {
@@ -126,7 +139,7 @@ class Blih {
                     console.log("• " + key);
                 });
 
-				process.exit();
+                process.exit();
             }
             else if (data.message)
             {
@@ -143,6 +156,8 @@ class Blih {
                     });
                 }
             }
+
+            this.requesting = false;
         });
     }
 
@@ -222,23 +237,35 @@ class Blih {
 
     async Clone(name)
     {
-        /*const cloneoptions = {
-            fetchOpts: {
-                callbacks: {
-                    certificateCheck: function() { return 0; },
-                    credentials: function(url, userName) {
-                        console.log(userName);
-                        return nodegit.Cred.sshKeyFromAgent(userName);
-                    }
-                }
-            }
-        };
+        this.spinner = ora("Cloning repo").start();
 
-        nodegit.Clone.clone("git@git.epitech.eu:/" + Env.USER + "/" + name, name, cloneoptions).then(repo => {
-            console.log(repo)
-        }).catch(console.log);*/
+        this.child = exec("git clone git@git.epitech.eu:/" + Env.USER + "/" + name, {
+            cmd: Env.WORK_PATH,
+            silent: true,
+            stdio: "ignore"
+        });
+    
+        this.child.on("exit", (code, sig) => {
+            if (code == 128)
+                return this.spinner.fail("Repo not cloned, you do suck");
 
-		console.log("Nah, this doesn't work yet");
+            this.spinner.succeed("Repo successfully clone");
+        });
+    }
+
+    async Prepare(name)
+    {
+        await this.Create(name);
+
+        while (this.requesting)
+            await delay(0);
+
+        await this.SetAcl(name, "ramassage-tek", 'r');
+
+        while (this.requesting)
+            await delay(0);
+
+        await this.Clone(name);
     }
 }
 

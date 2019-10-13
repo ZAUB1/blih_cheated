@@ -69,7 +69,11 @@ CBS["repo"] = CBS["repository"] = async args => {
 
             case "clone":
                 Blih.Clone(args[index + 1]);
+                break;
 
+            case "prepare":
+                Blih.Prepare(args[index + 1]);
+                break;
             /*default:
                 repo_man();*/
         }
