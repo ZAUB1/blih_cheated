@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const request = require("request");
 const ora = require("ora");
 const exec = require("child_process").exec;
+const fs = require("fs");
 
 const USER_AGENT = "blih-1.7";
 const BASE_URL = "https://blih.epitech.eu";
@@ -207,6 +208,25 @@ class Blih {
 
             this.ServRequest("/repositories", "GET");
         });
+    }
+
+    async UpSsh(path)
+    {
+        console.log("WIP");
+
+        /* fs.readFile(path, async (err, data) => { //WIP
+            if (err)
+                return console.log("File specified not found. Aborting");
+
+            if (!Env.USER)
+                await this.AskUser();
+
+            this.AskForPass(() => {
+                this.spinner = ora('Setting SSH Key').start();
+
+                this.ServRequest("/sshkeys", "POST", { sshkey: data });
+            });
+        }); */
     }
 
     async GetAcl(name)

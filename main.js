@@ -13,6 +13,7 @@ Commands:
 • repo | repository -- Allows for repository managment
 • who -- In case you forgot who you are, it prints it.
 • userlogout -- Logs out current user in order to use the tool as another one
+• sshkey -- Upload the SSH key specified in param
     `);
 
     process.exit();
@@ -46,11 +47,13 @@ CBS["repo"] = CBS["repository"] = async args => {
                 Blih.Create(args[index + 1]);
                 break;
 
+            case "rm":
             case "remove":
             case "delete":
                 Blih.Delete(args[index + 1]);
                 break;
 
+            case "ls":
             case "list":
                 Blih.List();
                 break;
@@ -80,9 +83,12 @@ CBS["repo"] = CBS["repository"] = async args => {
     });
 };
 
-/*CBS["-u"] = CBS["--user"] = async args => {
-    Blih.AskUser(CBS[args[0]], args.slice(0));
-};*/
+CBS["-ssh"] = CBS["sshkey"] = async args => {
+    if (args.length == 0)
+        return console.log("You must provide a path in order to upload the ssh key");
+
+    Blih.UpSsh(args[0]);
+};
 
 CBS["userlogout"] = () => {
     Blih.Logout();
