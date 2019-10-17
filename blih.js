@@ -109,7 +109,7 @@ class Blih {
         return signedData;
     }
 
-    ServRequest(resource, method, data)
+    ServRequest(resource, method, idata, cb)
     {
         this.requesting = true;
 
@@ -120,11 +120,14 @@ class Blih {
                 "Content-Type": "application/json",
                 "User-Agent": USER_AGENT,
             },
-            body: JSON.stringify(this.GetSignedData(data))
+            body: JSON.stringify(this.GetSignedData(idata))
         };
 
         request(options, (err, res, body) => {
             const data = JSON.parse(body);
+
+            if (cb)
+                return cb(data);
 
             if (data.error)
             {
@@ -207,6 +210,41 @@ class Blih {
             this.spinner = ora('Getting repos').start();
 
             this.ServRequest("/repositories", "GET");
+        });
+    }
+
+    async Search(looking)
+    {
+        if (!Env.USER)
+            await this.AskUser();
+
+        this.AskForPass(() => {
+            this.spinner = ora('Getting repos').start();
+
+            this.ServRequest("/repositories", "GET", null, data => {
+                if (data)
+                {
+                    const arr = Object.keys(data.repositories);
+
+                    if (arr.length == 0)
+                    {
+                        this.spinner.fail("No repos found with the specified name");
+                        process.exit(128);
+                    }
+
+                    this.spinner.succeed("Some repos where found");
+
+                    for (let i = 0; arr[i]; i++)
+                    {
+                        const name = arr[i];
+
+                        if (name.includes(looking))
+                            console.log("• " + name);
+                    }
+
+                    process.exit();
+                }
+            });
         });
     }
 

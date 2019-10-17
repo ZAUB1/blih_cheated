@@ -77,6 +77,9 @@ CBS["repo"] = CBS["repository"] = async args => {
             case "prepare":
                 Blih.Prepare(args[index + 1]);
                 break;
+
+            case "search":
+                Blih.Search(args[index + 1]);
             /*default:
                 repo_man();*/
         }
