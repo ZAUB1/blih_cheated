@@ -226,23 +226,24 @@ class Blih {
                 {
                     const arr = Object.keys(data.repositories);
 
-                    if (arr.length == 0)
-                    {
-                        this.spinner.fail("No repos found with the specified name");
-                        process.exit(128);
-                    }
-
-                    this.spinner.succeed("Some repos where found");
-
                     for (let i = 0; arr[i]; i++)
                     {
                         const name = arr[i];
 
                         if (name.includes(looking))
+                        {
+                            if (this.spinner.isSpinning)
+                                this.spinner.succeed("Some repos where found");
+
                             console.log("• " + name);
+
+                            if (i == arr.length - 1)
+                                return process.exit();
+                        }
                     }
 
-                    process.exit();
+                    this.spinner.fail("No repos found with the specified name");
+                    process.exit(128);
                 }
             });
         });
