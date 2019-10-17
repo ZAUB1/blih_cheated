@@ -15,6 +15,10 @@ const delay = (ms) => { //Awaitable
     });
 };
 
+const trim = (str) => {
+    return String(str).replace(/(\r\n|\n|\r)/gm, '');
+};
+
 class Blih {
     constructor()
     {
@@ -251,9 +255,9 @@ class Blih {
 
     async UpSsh(path)
     {
-        console.log("WIP");
+        fs.readFile(path, async (err, data) => {
+            console.log(encodeURI(trim(data)));
 
-        /* fs.readFile(path, async (err, data) => { //WIP
             if (err)
                 return console.log("File specified not found. Aborting");
 
@@ -263,9 +267,9 @@ class Blih {
             this.AskForPass(() => {
                 this.spinner = ora('Setting SSH Key').start();
 
-                this.ServRequest("/sshkeys", "POST", { sshkey: data });
+                this.ServRequest("/sshkeys", "POST", { sshkey: encodeURI(trim(data)) });
             });
-        }); */
+        });
     }
 
     async GetAcl(name)
