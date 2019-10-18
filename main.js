@@ -1,3 +1,5 @@
+#!/usr/bin/node
+
 const Blih = require("./blih");
 const CBS = [];
 
