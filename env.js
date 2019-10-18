@@ -13,13 +13,21 @@ class Env {
         this.WORK_PATH = process.cwd();
         this.jdata = {};
 
-        this.jdata = JSON.parse(fs.readFileSync(ENVFILE));
+        try
+        {
+            const buff = fs.readFileSync(ENVFILE);
+            this.jdata = JSON.parse(buff);
 
-        if (this.jdata.user)
-            this.USER = this.jdata.user;
+            if (this.jdata.user)
+                this.USER = this.jdata.user;
 
-        if (this.jdata.passwd)
-            this.PASSWD = Crypter.Decrypt(this.jdata.passwd);
+            if (this.jdata.passwd)
+                this.PASSWD = Crypter.Decrypt(this.jdata.passwd);
+        }
+        catch (e)
+        {
+            fs.writeFileSync(ENVFILE, "{}");
+        }
     }
 
     SaveUser(usr)
