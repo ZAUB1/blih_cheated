@@ -1,13 +1,9 @@
-if which node > /dev/null then
-    #Node's installed
-else
+if ! which node > /dev/null; then
     echo "Node isn't installed. Aborting."
     exit 1
 fi
 
-if which npm > /dev/null then
-    #Node's installed
-else
+if ! which npm > /dev/null; then
     echo "Npm isn't installed. Aborting."
     exit 1
 fi
