@@ -101,6 +101,10 @@ CBS["userlogout"] = () => {
     Blih.Logout();
 };
 
+CBS["who"] = () => {
+    Blih.WhoAmI();
+};
+
 setImmediate(() => {
     if (process.argv.length <= 2)
         CBS["-h"]();

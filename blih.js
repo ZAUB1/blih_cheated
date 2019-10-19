@@ -169,6 +169,17 @@ class Blih {
         });
     }
 
+    async WhoAmI()
+    {
+        if (!Env.USER)
+        {
+            ora().fail("No user currently set");
+            process.exit(184);
+        }
+
+        ora().succeed("You are: " + Env.USER);
+    }
+
     async Create(name)
     {
         if (!Env.USER)
