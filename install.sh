@@ -1,3 +1,17 @@
+if which node > /dev/null then
+    #Node's installed
+else
+    echo "Node isn't installed. Aborting."
+    exit 1
+fi
+
+if which npm > /dev/null then
+    #Node's installed
+else
+    echo "Npm isn't installed. Aborting."
+    exit 1
+fi
+
 if [[ $EUID -ne 0 ]]; then
     echo "You must run this with superuser priviliges.  Try \"sudo ./install.sh\"" 2>&1
     exit 1

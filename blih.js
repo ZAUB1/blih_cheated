@@ -300,6 +300,8 @@ class Blih {
 
     async Clone(name)
     {
+        this.requesting = true;
+
         this.spinner = ora("Cloning repo").start();
 
         this.child = exec("git clone git@git.epitech.eu:/" + Env.USER + "/" + name, {
@@ -312,7 +314,19 @@ class Blih {
             if (code == 128)
                 return this.spinner.fail("Repo not cloned, you do suck");
 
-            this.spinner.succeed("Repo successfully clone");
+            this.spinner.succeed("Repo successfully cloned");
+
+            this.requesting = false;
+        });
+    }
+
+    async GlobalClone(args)
+    {
+        args.every(async val => {
+            while (this.requesting)
+                await delay(0);
+
+            await this.Clone(val);
         });
     }
 

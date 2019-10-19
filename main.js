@@ -31,6 +31,8 @@ Commands:
 • delete -- Deletes the specified repo
 • setacl -- Allows to set permission to users on the repo
 • getacl -- Shows users perms on the repo
+• prepare -- Creates, Set default ACLs, Clones
+• clone -- Clones the specified repos (yes you can clone multiple at once)
     `);
 };
 
@@ -73,7 +75,7 @@ CBS["repo"] = CBS["repository"] = async args => {
                 break;
 
             case "clone":
-                Blih.Clone(args[index + 1]);
+                Blih.GlobalClone(args.slice(1));
                 break;
 
             case "prepare":
