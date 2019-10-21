@@ -9,7 +9,7 @@ A more advanced remake of Blih (Bocal Lightweight Interface for Humans), EPITECH
 ## Installation
 ```
 # Installs zblih
-$ git clone https://github.com/zaub1/blih_cheated
+$ git clone https://github.com/zaub1/blih_cheated && cd blih_cheated
 $ sudo ./install.sh
 ```
 ## Example
